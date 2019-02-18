@@ -1,7 +1,22 @@
 {
-    "url" : "mqtt.testxtra.thingbine.com",
-    "port" : 8904,
-    "client_id" : "b827eb81195a",
-    "user_id" : "b827eb81195a",
-    "user_pw" : "QICJgdpKV-XCqtOULoQtp2QmsGU="
+    "server" : {
+        "url" : "mqtt.testxtra.thingbine.com",
+        "port" : 8904
+    },
+    "gateways" : [
+        {
+            "id" : "b827eb81195a",
+            "apikey" : "QICJgdpKV-XCqtOULoQtp2QmsGU=",
+            "devices" : [
+                {
+                    "id" : "b827eb81195a-TC-1",
+                    "sensors" : [
+                        {
+                            "id" : "b827eb81195a-TC-1-40441"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }
