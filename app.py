@@ -5,6 +5,7 @@ import getopt
 import thingplus
 import seah
 import json
+import copy
 
 
 def main(argv):
@@ -21,16 +22,20 @@ def main(argv):
             json_data=open(arg).read() 
             config = json.loads(json_data)
 
-    server = thingplus.Server(config['server'])
-    for gateway in config['gateways']:
+
+    gateway_list = []
+    for gateway_config in config['gateways']:
         try:
-            server.attach(seah.Gateway(gateway))
+            gateway = seah.create_gateway(gateway_config)
+            for server_config in config['servers']:
+                if server_config['id'] == gateway.server_id:
+                    gateway.server = thingplus.Server(server_config)
+            gateway_list.append(gateway)
         except Exception as error:
             print(error)
 
-    server.print_config()
-
-    server.start()
+    for gateway in gateway_list:
+        gateway.start()
 
 if __name__ == "__main__":
    main(sys.argv[1:])

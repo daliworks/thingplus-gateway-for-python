@@ -1,0 +1,85 @@
+{
+    "servers" : [
+        {
+            "id" : 1,
+            "url" : "mqtt.testxtra.thingbine.com",
+            "port" : 8904
+        }
+    ],
+    "gateways" : [
+        {
+            "id" : "b827eb81195a",
+            "apikey" : "QICJgdpKV-XCqtOULoQtp2QmsGU=",
+            "server_id" : 1,
+            "collrection_interval" : 30,
+            "transmission_interval" : 0.1,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : "predefined"
+                }
+            ]
+        },
+        {
+            "id" : "0060645d155d",
+            "apikey" : "6qmo17vJlrbBk9QGZVm1usUPsZ8=",
+            "server_id" : 1,
+            "start_delay" : 30,
+            "collrection_interval" : 30,
+            "transmission_interval" : 0.1,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : "predefined"
+                }
+            ]
+        },
+        {
+            "id" : "00405c010101",
+            "apikey" : "lviOeICV2ZBDYUMWTnIiFcweqFw=",
+            "server_id" : 1,
+            "start_delay" : 60,
+            "collrection_interval" : 30,
+            "transmission_interval" : 0.1,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : "predefined"
+                }
+            ]
+        },
+        {
+            "id" : "00405c010102",
+            "apikey" : "BxvZ2D0aPCk2H3e1S94f1n3KeCY=",
+            "server_id" : 1,
+            "start_delay" : 90,
+            "collrection_interval" : 30,
+            "transmission_interval" : 0.1,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : "predefined"
+                }
+            ]
+        },
+        {
+            "id" : "00405c010103",
+            "apikey" : "i4nK14LNOLxmkcGVnShkuO6u4zM=",
+            "server_id" : 1,
+            "start_delay" : 120,
+            "collrection_interval" : 30,
+            "transmission_interval" : 0.1,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : "predefined"
+                }
+            ]
+        }
+    ]
+}

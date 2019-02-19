@@ -9,11 +9,11 @@
             "apikey" : "QICJgdpKV-XCqtOULoQtp2QmsGU=",
             "devices" : [
                 {
-                    "id" : "b827eb81195a-TC-1",
+                    "id" : "1",
+                    "model" : "turbo_compressor",
                     "sensors" : [
-                        {
-                            "id" : "b827eb81195a-TC-1-40441"
-                        }
+                        { "id" : "36000", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36001", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01}
                     ]
                 }
             ]
