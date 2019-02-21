@@ -2,58 +2,68 @@ import thingplus
 import copy
 import random
 import time
+import json
 
 class   Gateway(thingplus.Gateway):
-    def __init__(self):
+    def __init__(self, config = None):
         thingplus.Gateway.__init__(self)
+        self.collection_start_time = None
         self.device_models = {
             'turbo_compressor' : TurboCompressor,
             'turbo_blower' : TurboBlower
         }
 
-    def init(self):
-        thingplus.Gateway.init(self)
+        self.set_config(config)
 
-    def run(self):
+    def postprocess(self):
         sensor_list = []
-        thingplus.Gateway.run(self)
-
         for device in self.device_list:
             sensor_list = sensor_list + device.sensor_list
+
+        collection_start_time = time.time()
 
         while True:
             for sensor in sensor_list:
                 sensor.single_run()
 
-            if self.server.connected:
-                print('[{0:s}] Gateway[{1:s}] tramsmission start!'.format(str(int(time.time())), self.id))
+            if self.client.is_connected():
+                self.trace.info('tramsmission start!')
                 transmission_start_time = time.time()
                 start_time = time.time()
+
                 for sensor in sensor_list:
-                    topic = 'v/a/g/' + self.id + '/s/' + sensor.id
-                    payload = str(sensor.time * 1000) + ',' + str(sensor.value)
-                    self.server.pub(topic, payload)
+                    self.publish_sensor_value(sensor)
+
                     current_time = time.time()
-                    if current_time - start_time < self.transmission_interval:
-                        time.sleep(self.transmission_interval - (current_time - start_time))
-                    start_time = start_time + self.transmission_interval
-                transmission_finished_time = time.time()
-                print('[{0:s}] Gateway[{1:s}] Elapsed Time : {2:d}'.format(str(int(time.time())), self.id, int(transmission_finished_time - transmission_start_time)))
+                    start_time += self.transmission_interval
+                    if start_time > time.time():
+                        time.sleep(start_time - time.time())
 
-            time.sleep(self.collection_interval)
+                self.trace.info('Elapsed Time : {0:5.2f}'.format(time.time() - transmission_start_time))
 
+            collection_start_time += self.collection_interval
+            if collection_start_time > time.time():
+                time.sleep(collection_start_time - time.time())
 
-def create_gateway(config = None):
-    gateway = Gateway()
+    def add_device(self, config):
+        try:
+            new_config = copy.copy(config)
+            new_config['id'] = self.id + '-' + config['id']
+    
+            thingplus.Gateway.add_device(self, new_config)
+        except Exception as error:
+            self.trace.error(error)
 
-    if config is not None:
-        gateway.set_config(config)
-
-    return  gateway
+    @staticmethod
+    def create(config = None):
+        try:
+            return  Gateway(config)
+        except Exception as error:
+            return  None
 
 class   TurboCompressor(thingplus.Device):
-    def __init__(self, parent = None):
-        thingplus.Device.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        thingplus.Device.__init__(self, parent = parent)
         self.sensor_models = {
             'temperature' : Temperature,
             'pressure' : Pressure,
@@ -300,15 +310,16 @@ class   TurboCompressor(thingplus.Device):
             { 'id' : '16271', 'model' : 'onoff'}
         ];
 
-    def set_config(self, config):
+        self.set_config(config)
+
+    def add_sensor(self, config):
         try:
             new_config = copy.copy(config)
-            new_config['id'] = self.parent.id + '-TC-' + config['id']
-
-            thingplus.Device.set_config(self, new_config)
+            new_config['id'] = self.id + '-' + config['id']
+    
+            thingplus.Device.add_sensor(self, new_config)
         except Exception as error:
-            print(self.__class__.__name__, error)
-
+            self.trace.error(error)
 
 class   TurboBlower(thingplus.Device):
     def __init__(self, parent = None):
@@ -559,58 +570,22 @@ class   TurboBlower(thingplus.Device):
             { 'id' : '16271', 'model' : 'onoff'}
         ];
 
-    def set_config(self, config):
+    def add_sensor(self, config):
         try:
             new_config = copy.copy(config)
-            new_config['id'] = self.parent.id + '-BL-' + config['id']
-
-            thingplus.Device.set_config(self, new_config)
+            new_config['id'] = self.id + '-' + config['id']
+    
+            thingplus.Device.add_sensor(self, new_config)
         except Exception as error:
-            print(self.__class__.__name__, error)
+            self.trace.error(error)
 
-class   Sensor(thingplus.Sensor):
-    def __init__(self, parent = None):
-        thingplus.Sensor.__init__(self, parent)
-        self.simulation = True
-        self.direction = 1
-
-    def set_config(self, config):
-        try:
-            new_config = copy.copy(config)
-            new_config['id'] = self.parent.id + '-' + config['id']
-
-            thingplus.Sensor.set_config(self, new_config)
-        except Exception as error:
-            print(self.__class__.__name__, error)
-
-
-    def single_run(self):
-        if self.simulation:
-            if self.type == 'onoff':
-                if random.random() > 0.5:
-                    self.value = self.max
-                else:
-                    self.value = self.min
-            else:
-                value = self.value + int((self.max - self.min) * random.random() * 0.1)
-                if self.direction > 0:
-                    if self.max > value:
-                        self.value = value
-                    else:
-                        self.value = self.max
-                        self.direction = -1
-                else:
-                    if self.min < value:
-                        self.value = value
-                    else:
-                        self.value = self.min
-                        self.direction = 1
-            self.time = int(time.time())
-        #print('{0:s} : {1:s}, {2:s}'.format(self.id, str(self.time), str(self.value)))
+class   Sensor(thingplus.SensorSimulator):
+    def __init__(self, config = None, parent = None):
+        thingplus.SensorSimulator.__init__(self, config, parent)
 
 class   Temperature(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'temperature'
         self.min = 0
         self.max = 100
@@ -618,8 +593,8 @@ class   Temperature(Sensor):
         self.unit = 'C'
 
 class   Current(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'current'
         self.min = 0
         self.max = 100
@@ -628,8 +603,8 @@ class   Current(Sensor):
 
 
 class   Pressure(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'pressure'
         self.min = 0
         self.max = 10000
@@ -637,8 +612,8 @@ class   Pressure(Sensor):
         self.unit = 'kg/cm2'
 
 class   Vibration(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'vibration'
         self.min = 0
         self.max = 10000
@@ -646,8 +621,8 @@ class   Vibration(Sensor):
         self.unit = ''
 
 class   Percent(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'percent'
         self.min = 0
         self.max = 1000
@@ -655,8 +630,8 @@ class   Percent(Sensor):
         self.unit = ''
 
 class   Number(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'number'
         self.min = 0
         self.max = 1000
@@ -664,8 +639,8 @@ class   Number(Sensor):
         self.unit = ''
 
 class   OnOff(Sensor):
-    def __init__(self, parent = None):
-        Sensor.__init__(self, parent)
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
         self.type = 'onoff'
         self.min = 0
         self.max = 1

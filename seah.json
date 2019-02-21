@@ -3,13 +3,14 @@
         {
             "id" : 1,
             "url" : "mqtt.testxtra.thingbine.com",
-            "port" : 8904
+            "port" : 8904,
+            "ca_cert" : "./ca-cert.pem"
         }
     ],
     "gateways" : [
         {
-            "id" : "b827eb81195a",
-            "apikey" : "QICJgdpKV-XCqtOULoQtp2QmsGU=",
+            "id" : "0060645d155d",
+            "apikey" : "6qmo17vJlrbBk9QGZVm1usUPsZ8=",
             "server_id" : 1,
             "devices" : [
                 {

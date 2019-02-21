@@ -3,7 +3,7 @@
 import sys 
 import getopt
 import thingplus
-import seah
+from seah import Gateway
 import json
 import copy
 
@@ -26,10 +26,24 @@ def main(argv):
     gateway_list = []
     for gateway_config in config['gateways']:
         try:
-            gateway = seah.create_gateway(gateway_config)
-            for server_config in config['servers']:
-                if server_config['id'] == gateway.server_id:
-                    gateway.server = thingplus.Server(server_config)
+            def get_server_config(configs, id):
+                try:
+                    for config in configs:
+                        if config.get('id') == id:
+                            return  config
+                except Exception as error:
+                    print(error)
+
+                return  None 
+
+            if gateway_config.get('server') is None:
+                server_id = gateway_config.get('server_id')
+                if server_id is None:
+                    gateway_config['server'] = get_server_config(config.get('servers'), 1)
+                else:
+                    gateway_config['server'] = get_server_config(config.get('servers'), server_id)
+
+            gateway = Gateway.create(gateway_config)
             gateway_list.append(gateway)
         except Exception as error:
             print(error)
