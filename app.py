@@ -3,10 +3,8 @@
 import sys 
 import getopt
 import thingplus
-from seah import Gateway
 import json
 import copy
-
 
 def main(argv):
     try:
@@ -26,27 +24,35 @@ def main(argv):
     gateway_list = []
     for gateway_config in config['gateways']:
         try:
-            def get_server_config(configs, id):
-                try:
-                    for config in configs:
-                        if config.get('id') == id:
-                            return  config
-                except Exception as error:
-                    print(error)
+            if gateway_config.get('vendor') is not None:
+                def get_server_config(configs, id):
+                    try:
+                        for config in configs:
+                            if config.get('id') == id:
+                                return  config
+                    except Exception as error:
+                        print(error)
 
-                return  None 
+                    return  None 
 
-            if gateway_config.get('server') is None:
-                server_id = gateway_config.get('server_id')
-                if server_id is None:
-                    gateway_config['server'] = get_server_config(config.get('servers'), 1)
+                if gateway_config.get('server') is None:
+                    server_id = gateway_config.get('server_id')
+                    if server_id is None:
+                        gateway_config['server'] = get_server_config(config.get('servers'), 1)
+                    else:
+                        gateway_config['server'] = get_server_config(config.get('servers'), server_id)
+
+                gateway = thingplus.create_gateway(gateway_config)
+                if gateway is not None:
+                    gateway_list.append(gateway)
                 else:
-                    gateway_config['server'] = get_server_config(config.get('servers'), server_id)
+                    print('Error :', gateway)
+            else:
+                print('Error : Vendor not defined')
 
-            gateway = Gateway.create(gateway_config)
-            gateway_list.append(gateway)
         except Exception as error:
             print(error)
+            
 
     for gateway in gateway_list:
         gateway.start()

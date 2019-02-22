@@ -1,0 +1,87 @@
+{
+    "servers" : [
+        {
+            "id" : 1,
+            "url" : "dmqtt.thingplus.net",
+            "port" : 21883
+        }
+    ],
+    "gateways" : [
+        {
+            "id" : "00405c012345",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
+            "apikey" : "cU46qW4MHDOXD0J-aKvRYFsZ8oQ=",
+            "server_id" : 1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
+            "devices" : [
+                {
+                    "model" : "turbo_compressor",
+                    "id" : "1",
+                    "sensors" : [
+                        { "id" : "46000", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46001", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46002", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46003", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46004", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46005", "model" : "percent", "min" : 0, "max" : 1000, "scale" : 0.1},
+                        { "id" : "46006", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46007", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46008", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46009", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46010", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46011", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46012", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46013", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46014", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46015", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46016", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46017", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "46018", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46019", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46020", "model" : "current", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46021", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "46022", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46023", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46024", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "46025", "model" : "number", "min" : 0, "max" : 1000, "scale" : 0.1},
+                        { "id" : "46026", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46027", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46028", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46029", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46030", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46031", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46032", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46033", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46034", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46035", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "46100", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36101", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36102", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36103", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36104", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36105", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36106", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36107", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36108", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36109", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36110", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36111", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36112", "model" : "temperature", "min" : -1000, "max" : 5000, "scale" : 0.1},
+                        { "id" : "36113", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36114", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36115", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36116", "model" : "pressure", "min" : 0, "max" : 10000, "scale" : 0.01},
+                        { "id" : "36117", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "36118", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "36119", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "36120", "model" : "vibration", "min" : 0, "max" : 10000, "scale" : 0.1},
+                        { "id" : "36121", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1},
+                        { "id" : "36122", "model" : "number", "min" : 0, "max" : 65535, "scale" : 1}
+                    ]
+                }
+            ]
+        }
+    ]
+}

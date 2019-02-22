@@ -1,0 +1,28 @@
+{
+    "servers" : [
+        {
+            "id" : 1,
+            "url" : "mqtt.testxtra.thingbine.com",
+            "port" : 8904,
+            "ca_cert" : "./ca-cert.pem"
+        }
+    ],
+    "gateways" : [
+        {
+            "id" : "00405c012345",
+            "vendor" : "postech",
+            "model" : "aduino",
+            "apikey" : "3h8tPDrHyFq2kt_5Y6aWs3oxbkc=",
+            "server_id" : 1,
+            "collection_interval" : 5,
+            "transmission_interval" : 10,
+            "devices" : [
+                {
+                    "id" : "1",
+                    "model" : "health_monitor",
+                    "sensors" : "predefined"
+                }
+            ]
+        }
+    ]
+}

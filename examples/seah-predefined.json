@@ -9,10 +9,12 @@
     "gateways" : [
         {
             "id" : "b827eb81195a",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
             "apikey" : "QICJgdpKV-XCqtOULoQtp2QmsGU=",
             "server_id" : 1,
-            "collrection_interval" : 30,
-            "transmission_interval" : 0.1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
             "devices" : [
                 {
                     "model" : "turbo_compressor",
@@ -23,11 +25,13 @@
         },
         {
             "id" : "0060645d155d",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
             "apikey" : "6qmo17vJlrbBk9QGZVm1usUPsZ8=",
             "server_id" : 1,
             "start_delay" : 30,
-            "collrection_interval" : 30,
-            "transmission_interval" : 0.1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
             "devices" : [
                 {
                     "model" : "turbo_compressor",
@@ -38,11 +42,13 @@
         },
         {
             "id" : "00405c010101",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
             "apikey" : "lviOeICV2ZBDYUMWTnIiFcweqFw=",
             "server_id" : 1,
             "start_delay" : 60,
-            "collrection_interval" : 30,
-            "transmission_interval" : 0.1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
             "devices" : [
                 {
                     "model" : "turbo_compressor",
@@ -53,11 +59,13 @@
         },
         {
             "id" : "00405c010102",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
             "apikey" : "BxvZ2D0aPCk2H3e1S94f1n3KeCY=",
             "server_id" : 1,
             "start_delay" : 90,
-            "collrection_interval" : 30,
-            "transmission_interval" : 0.1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
             "devices" : [
                 {
                     "model" : "turbo_compressor",
@@ -68,11 +76,13 @@
         },
         {
             "id" : "00405c010103",
+            "vendor"  : "seah",
+            "model"  : "ml3g+",
             "apikey" : "i4nK14LNOLxmkcGVnShkuO6u4zM=",
             "server_id" : 1,
             "start_delay" : 120,
-            "collrection_interval" : 30,
-            "transmission_interval" : 0.1,
+            "collrection_interval" : 10,
+            "transmission_interval" : 30,
             "devices" : [
                 {
                     "model" : "turbo_compressor",
