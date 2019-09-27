@@ -1,8 +1,10 @@
+import threading
 import trace
-import thingplus.sensor as Sensor
+import common.sensor as Sensor
 
-class   Device():
+class   Device(threading.Thread):
     def __init__(self, config = None, parent = None):
+        threading.Thread.__init__(self)
         self.parent = parent
         self.id = None
         self.sensor_list = []
@@ -16,6 +18,7 @@ class   Device():
             'vibration' : Sensor.Vibration,
             'percent' : Sensor.Percent,
             'number' : Sensor.Number,
+            'frequency' : Sensor.Frequency,
             'onoff' : Sensor.OnOff
         }
 
@@ -47,6 +50,9 @@ class   Device():
             self.trace.error('Err :', error)
 
         return  False
+
+    def get_id(self):
+        return  self.id
 
     def add_sensor(self, config):
         try:
@@ -88,6 +94,22 @@ class   Device():
             output['Sensors'].append(sensor.to_dictionary())
 
         return  output
+
+    def stage1(self):
+        None
+
+    def stage2(self):
+        None
+
+    def stage3(self):
+        None
+
+    def run(self):
+        self.trace.info('started')
+        self.stage1()
+        self.stage2()
+        self.stage3()
+
 
     @staticmethod
     def create(model = None, config = None, parent = None):

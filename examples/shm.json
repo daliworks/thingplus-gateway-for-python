@@ -1,0 +1,47 @@
+{
+    "application": "shm",
+    "servers" : [
+        {
+            "type" : "thingplus",
+            "url" : "mqtt.sandbox.thingplus.net",
+            "port" : 8883,
+            "ca_cert" : "./ca-cert.pem"
+        }
+    ],
+    "gateways" : [
+        {
+            "server" : "thingplus",
+            "id" : "00405c010203",
+            "model" : "raspberrypi",
+            "apikey" : "W9zBm0zUNPcRGzhN5zsQPbhWmB4=",
+            "collection_interval" : 5,
+            "transmission_interval" : 10,
+            "devices" : [
+                {
+                    "id" : "2",
+                    "model" : "ublox",
+                    "serial" : {
+                        "port" : "/dev/ttyACM0",
+                        "baudrate" : 115200,
+                        "parity" : "none",
+                        "stopbits" : 1,
+                        "databits" : 8
+                    },
+                    "sensors" : "predefined"
+                },
+                {
+                    "id" : "3",
+                    "model" : "alps",
+                    "serial" : {
+                        "port" : "/dev/ttyUSB0",
+                        "baudrate" : 921600,
+                        "parity" : "none",
+                        "stopbits" : 1,
+                        "databits" : 8
+                    },
+                    "sensors" : "predefined"
+                }
+            ]
+        }
+    ]
+}

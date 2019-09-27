@@ -2,9 +2,8 @@ import json
 import threading
 import trace
 import time
-from thingplus.server import Server
-from thingplus.client import Client
-from thingplus.device import Device
+import server.base as Server
+from common.device import Device
 
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
@@ -32,14 +31,27 @@ class RepeatedTimer(object):
         self.is_running = False
 
 class   Gateway(threading.Thread):
-    def __init__(self, config = None):
+    def __init__(self, _config = None):
         threading.Thread.__init__(self)
-        self.id = None 
-        self.apikey = None
-        self.keep_alive = 60
-        self.collection_interval = 10
-        self.transmission_interval = 60
-        self.transmission_gap = 0.1
+        self.config = {
+            'id' : None,
+            'apikey' : None,
+            'keep_alive' : 60,
+            'collection_interval' : 10,
+            'transmission_interval' : 60,
+            'transmission_gap' : 0.1,
+            'client' : {
+                    'id' : '',
+                    'user_id' : '',
+                    'user_pw' : '',
+                    'server' : {
+                            'url' : '',
+                            'port' : 80,
+                            'ca_cert' : ''
+                        }
+                }
+        }
+            
         self.client = None
         self.device_list = []
         self.device_models = {
@@ -49,58 +61,59 @@ class   Gateway(threading.Thread):
         self.trace.name = 'GW'
         self.sensor_list = []
 
+        self.keep_alive_timer = None
         self.collection_timer = None
         self.transmission_timer = None
         self.status_transmission_timer = None
 
-        self.set_config(config)
+        self.set_config(_config)
+
 
         self.trace.info('Gateway created')
 
-    def set_config(self, config):
-        if config is not None:
+    def set_config(self, _config):
+        if _config is not None:
             try:
-                if config.get('id') is not None:
-                    self.id = config.get('id')
-    
-                if config.get('apikey') is not None:
-                    self.apikey = config.get('apikey')
-    
-                if config.get('devices') is not None:
-                    for item in config.get('devices'):
-                        self.add_device(item)
-    
-                if config.get('collection_interval') is not None:
-                    self.collection_interval = config.get('collection_interval')
-                    self.keep_alive = self.collection_interval
-    
-                if config.get('keep_alive') is not None:
-                    self.keep_alive = config.get('keep_alive')
+                self.config.update(_config)
 
-                if config.get('transmission_interval') is not None:
-                    self.transmission_interval = config.get('transmission_interval')
-    
-                if config.get('server') is not None:
-                    client_config = {}
-    
-                    client_config['server'] = config.get('server')
-                    client_config['id'] = self.id
-                    client_config['user_id'] = self.id
-                    client_config['user_pw'] = self.apikey
-    
-                    self.client = Client(config = client_config, parent = self)
-                    self.client.on_connect = Gateway.client_on_connect
-                    self.client.on_disconnect = Gateway.client_on_disconnect
-                    self.client.on_message = Gateway.client_on_message
-                    self.client.on_publish = Gateway.client_on_publish
+                self.config['client']['server'] = self.config['server']
+   
+                if _config.get('client') is not None:
+                    if _config['client'].get('id') is None:
+                        self.config['client']['id'] = self.config['id']
+
+                    if _config['client'].get('user_id') is None:
+                        self.config['client']['user_id'] = self.config['id']
+
+                    if _config['client'].get('user_pw') is None:
+                        self.config['client']['user_pw'] = self.config['apikey']
+                else: 
+                    self.config['client']['id'] = self.config['id']
+                    self.config['client']['user_id'] = self.config['id']
+                    self.config['client']['user_pw'] = self.config['apikey']
     
                 return  True
             except Exception as error:
-                self.trace.error(error)
+                self.trace.error('Except : %s'%error)
     
         return  False
 
-    def preprocess(self):
+    def init(self):
+        for device_config in self.config['devices']:
+            self.trace.debug(device_config)
+            self.add_device(device_config)
+
+
+    def stage1(self):
+        self.init()
+
+        if self.server is not None:
+            self.client = self.server.create_client(_config = self.config['client'], _parent = self)
+            self.client.on_connect = Gateway.client_on_connect
+            self.client.on_disconnect = Gateway.client_on_disconnect
+            self.client.on_message = Gateway.client_on_message
+            self.client.on_publish = Gateway.client_on_publish
+
         try:
             if self.collection_timer is not None:
                 self.collection_timer.stop()
@@ -119,9 +132,11 @@ class   Gateway(threading.Thread):
         except Exception as error:
             self.trace.error(error)
 
-        None
+    def stage2(self):
+        if self.client is not None:
+            self.client.start()
 
-    def postprocess(self):
+    def stage3(self):
         def keep_alive(self):
             self.publish_gateway_and_sensor_status()
     
@@ -139,7 +154,7 @@ class   Gateway(threading.Thread):
                     self.publish_sensor_value(sensor)
 
                     current_time = time.time()
-                    start_time += self.transmission_gap
+                    start_time += self.config['transmission_gap']
                     if start_time > time.time():
                         time.sleep(start_time - time.time())
 
@@ -149,23 +164,23 @@ class   Gateway(threading.Thread):
         for device in self.device_list:
             self.sensor_list = self.sensor_list + device.sensor_list
 
-        self.collection_timer = RepeatedTimer(self.collection_interval, sensor_collection, self)
+        self.collection_timer = RepeatedTimer(self.config['collection_interval'], sensor_collection, self)
         self.collection_timer.start()
 
-        self.keep_alive_timer = RepeatedTimer(self.keep_alive, keep_alive, self)
+        self.keep_alive_timer = RepeatedTimer(self.config['keep_alive'], keep_alive, self)
         self.keep_alive_timer.start()
 
-        self.transmission_timer = RepeatedTimer(self.transmission_interval, sensor_transmission, self/
+        self.transmission_timer = RepeatedTimer(self.config['transmission_interval'], sensor_transmission, self)
         self.transmission_timer.start()
 
     def run(self):
         self.trace.info('started')
-        self.preprocess()
+        self.stage1()
+        self.stage2()
+        self.stage3()
 
-        if self.client is not None:
-            self.client.start()
-
-        self.postprocess()
+        for device in self.device_list:
+            device.start()
 
     def add_device(self, config):
         model = None
@@ -181,19 +196,20 @@ class   Gateway(threading.Thread):
             self.trace.error('Device creation failed :', model)
             return  False
 
+        self.trace.info('Device creation success :', model)
         self.attach(device)
         return  True
 
     def attach(self, item):
-        if isinstance(item, Server):
+        if isinstance(item, Server.Server):
             self.server = item
+            self.trace.info('Server attached')
         elif isinstance(item, Device):
             self.device_list.append(item)
+            self.trace.info('New device[%s] attached'%(item.get_id()))
 
     def to_dictionary(self): 
-        output = {}
-        output['id'] = self.id
-        output['apikey'] = self.apikey
+        output = self.config
         output['Devices'] = []
         for device in self.device_list:
             output['Devices'].append(device.to_dictionary())
@@ -201,21 +217,21 @@ class   Gateway(threading.Thread):
         return  output
 
     def publish_gateway_status(self):
-        topic = 'v/a/g/{0:s}/status'.format(self.id)
-        payload = '{0:s},{1:d}'.format('on', int(self.keep_alive * 1.5))
+        topic = 'v/a/g/{0:s}/status'.format(self.config['id'])
+        payload = '{0:s},{1:d}'.format('on', int(self.config['keep_alive'] * 1.5))
         self.client.publish(topic, payload)
  
     def publish_gateway_and_sensor_status(self):
-        topic = 'v/a/g/{0:s}/status'.format(self.id)
-        payload = '{0:s},{1:d}'.format('on', int(self.keep_alive * 1.5))
+        topic = 'v/a/g/{0:s}/status'.format(self.config['id'])
+        payload = '{0:s},{1:d}'.format('on', int(self.config['keep_alive'] * 1.5))
         for sensor in self.sensor_list:
-            payload += ',{0:s},{1:s},{2:d}'.format(sensor.id, 'on', int(self.keep_alive * 1.5))
+            payload += ',{0:s},{1:s},{2:d}'.format(sensor.id, 'on', int(self.config['keep_alive'] * 1.5))
 
         self.trace.debug('Keep alive :', payload)
         self.client.publish(topic, payload)
  
     def publish_response(self, msg_id, result = None):
-        topic = 'v/a/g/{0:s}/res'.format(self.id)
+        topic = 'v/a/g/{0:s}/res'.format(self.config['id'])
         payload = {}
         payload['id'] = msg_id
         if result is None:
@@ -233,17 +249,17 @@ class   Gateway(threading.Thread):
         else:
             value = sensor.value
 
-        topic = 'v/a/g/{0:s}/s/{1:s}'.format(self.id, sensor.id)
+        topic = 'v/a/g/{0:s}/s/{1:s}'.format(self.config['id'], sensor.id)
         payload = '{0:d},{1:s}'.format(int(sensor.time * 1000), str(value))
         self.client.publish(topic, payload)
 
     def publish_sensor_status(self, sensor):
-        topic = 'v/a/g/{0:s}/s/{1:s}/status'.format(self.id, sensor.id)
-        payload = '{0:s},{1:d}'.format('on', int(self.keep_alive * 1.5))
+        topic = 'v/a/g/{0:s}/s/{1:s}/status'.format(self.config['id'], sensor.id)
+        payload = '{0:s},{1:d}'.format('on', int(self.config['keep_alive'] * 1.5))
         self.client.publish(topic, payload)
  
     def on_connect(self, flags, rc):
-        topic = 'v/a/g/{0:s}/req'.format(self.id)
+        topic = 'v/a/g/{0:s}/req'.format(self.config['id'])
         self.client.subscribe(topic)
 
     def on_disconnect(self, rc):

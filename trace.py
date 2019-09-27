@@ -1,8 +1,9 @@
 import time
+import logging
 import traceback
 
 class   Trace():
-    def __init__(self, object):
+    def __init__(self, object = None):
         self.object = object
         self.time_field = True
         self.level_field = True
@@ -10,50 +11,56 @@ class   Trace():
         self.id_field = False
         self.level = ['DBG', 'INF', 'ERR']
         self.name =  self.object.__class__.__name__
+        self.logger = logging.getLogger(self.name) 
+      
+        #ch = logging.StreamHandler()
+        #ch.setLevel(logging.DEBUG)
 
-    def header(self, time, level, name):
-        output = ''
-        if self.time_field:
-            output = output + '[{0:d}]'.format(time)
+        # create formatter
+        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        if self.level_field:
-            output = output + '[{0:s}]'.format(level)
+        # add formatter to ch
+        #ch.setFormatter(formatter)
 
-        if self.name_field:
-            output = output + '[{0:s}]'.format(name)
+        # add ch to logger
+        #self.logger.addHandler(ch)
 
-        if self.id_field:
-            if self.object is not None and self.object.id is not None:
-                output = output + '[{0:s}]'.format(self.object.id)
-
-        return  output
-
-    def debug(self, first, *args):
+    def debug(self, *args):
         if 'DBG' in self.level:
-            print(self.header(int(time.time()), 'DBG', self.name), first, *args)
+            output = ''
+            for arg in args:
+                output = output + ' {0}'.format(arg)
+            #logging.debug(output)
+            self.logger.debug(output)
 
-    def info(self, first, *args):
+    def info(self, *args):
         if 'INF' in self.level:
-            print(self.header(int(time.time()), 'INF', self.name), first, *args)
+            output = ''
+            for arg in args:
+                output = output + ' {0}'.format(arg)
+            #logging.info(output)
+            self.logger.info(output)
 
-    def error(self, first, *args):
+    def error(self, *args):
         if 'ERR' in self.level:
-            traceback.print_stack()
-            print(self.header(int(time.time()), 'ERR', self.name), first, *args)
+            #traceback.print_stack()
+            output = ''
+            for arg in args:
+                output = output + ' {0}'.format(arg)
+            logging.error(output)
+            #self.logger.error(output)
 
-def header(self, time, level, name = ''):
-    output = ''
-    output = output + '[{0:s}]'.format(time)
-    output = output + '[{0:s}]'.format(level)
-    output = output + '[{0:s}]'.format(name)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+trace_ = Trace()
 
-    return  output
+def debug(*args):
+    trace_.debug(*args)
+    None
 
-def debug(first, *args):
-    print(header(int(time.time()), 'DBG', 'GLOBAL'), first, *args)
+def info(*args):
+    trace_.info(*args)
+    None
 
-def info(first, *args):
-    print(header(int(time.time()), 'INF', 'GLOBAL'), first, *args)
-
-def error(first, *args):
-    print(header(int(time.time()), 'ERR', 'GLOBAL'), first, *args)
+def error(*args):
+    trace_.err(*args)
+    None

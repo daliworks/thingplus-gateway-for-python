@@ -178,6 +178,15 @@ class   Number(Sensor):
         self.scale = 0.1
         self.unit = ''
 
+class   Frequency(Sensor):
+    def __init__(self, config = None, parent = None):
+        Sensor.__init__(self, config, parent)
+        self.type = 'frequency'
+        self.min = 0
+        self.max = 1000
+        self.scale = 1
+        self.unit = ''
+
 class   OnOff(Sensor):
     def __init__(self, config = None, parent = None):
         Sensor.__init__(self, config, parent)
